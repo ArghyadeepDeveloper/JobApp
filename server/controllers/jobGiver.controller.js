@@ -7,7 +7,6 @@ const saltRounds = 10; // Number of rounds for hashing
 
 export const registerJobGiver = async (req, res) => {
   try {
-    console.log(req.body);
     const { contactPerson, email, phone, companyId, password } = req.body;
     if (!contactPerson || !email || !phone || !password) {
       handleError(req, res, error, "Please provide all data");

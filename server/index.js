@@ -9,6 +9,7 @@ import adminRoutes from "./routes/admin.routes.js";
 import companyRoutes from "./routes/company.routes.js";
 import cityRoutes from "./routes/city.routes.js";
 import industryRoutes from "./routes/industry.routes.js";
+import jobApplierRoutes from "./routes/jobappliers.routes.js";
 
 dotenv.config();
 
@@ -24,6 +25,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 app.use(express.static(path.join(__dirname, "uploads")));
 app.use("/employers", jobGiverRoutes);
+app.use("/jobSeekers", jobApplierRoutes);
 app.use("/admin", adminRoutes);
 app.use("/admin", cityRoutes);
 app.use("/admin", industryRoutes);

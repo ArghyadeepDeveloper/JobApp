@@ -1,22 +1,22 @@
 import handleError from "../errors/errorHandler.js";
 import Admin from "../models/admin.model.js";
-import JobApplier from "../models/jobAppliers.model.js";
+import JobApplier from "../models/jobappliers.model.js";
 import JobGiver from "../models/jobGiver.model.js";
 
 const checkRole = (role) => {
   return async (req, res, next) => {
     try {
       let user;
-
+      console.log("inside check user ", req.user);
       switch (role) {
         case "admin":
-          user = await Admin.findById(req.user.id);
+          user = await Admin.findById(req.user.userId);
           break;
         case "jobgiver":
-          user = await JobGiver.findById(req.user.id);
+          user = await JobGiver.findById(req.user.userId);
           break;
-        case "jobseeker":
-          user = await JobApplier.findById(req.user.id);
+        case "jobapplier":
+          user = await JobApplier.findById(req.user.userId);
           break;
         default:
           return res.status(400).json({ message: "Invalid role specified." });

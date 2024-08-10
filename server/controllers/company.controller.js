@@ -5,7 +5,6 @@ import Industry from "../models/industry.model.js";
 
 // Create a new company
 export const createCompany = async (req, res) => {
-  console.log(req.body);
   try {
     const { name, address, city, website, industryId } = req.body;
     const createdBy = req.user.id;
@@ -16,7 +15,7 @@ export const createCompany = async (req, res) => {
     }
     // Check if the city exists
     const cityExists = await City.findOne({ code: city });
-    console.log(cityExists);
+
     if (!cityExists) {
       return res
         .status(400)

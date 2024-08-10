@@ -17,16 +17,27 @@ const jobApplierSchema = new Schema({
     unique: true,
     match: [/.+\@.+\..+/, "Please fill a valid email address"],
   },
-  phone: {
+  city: {
     type: String,
     required: true,
   },
+  password: {
+    type: String,
+    required: true,
+  },
+  phone: {
+    type: String,
+    required: true,
+    unique: true,
+  },
   resume: {
     type: String, // Assuming the resume is stored as a URL or file path
-    required: true,
   },
   coverLetter: {
     type: String, // Assuming the cover letter is stored as a URL or file path
+  },
+  profilePic: {
+    type: String, // Filename or URL of the profile picture
   },
   appliedJobs: [
     {
@@ -52,15 +63,15 @@ const jobApplierSchema = new Schema({
       type: String,
     },
   ],
-  experience: [
-    {
-      company: String,
-      role: String,
-      startDate: Date,
-      endDate: Date,
-      description: String,
-    },
-  ],
+  experience: {
+    type: Number,
+    default: 0,
+  },
+  followCompany: {
+    type: [Schema.Types.ObjectId],
+    ref: "Company",
+    default: [],
+  },
   education: [
     {
       institution: String,
@@ -68,6 +79,59 @@ const jobApplierSchema = new Schema({
       fieldOfStudy: String,
       startDate: Date,
       endDate: Date,
+    },
+  ],
+  profileSummary: {
+    type: String,
+    default: "",
+  },
+  dateOfBirth: {
+    type: Date,
+    required: true,
+  },
+  languages: {
+    type: [String],
+    default: [],
+  },
+  address: {
+    type: String,
+    default: "",
+  },
+  currentJobRole: {
+    type: String,
+    default: "",
+  },
+  jobExperience: [
+    {
+      companyName: String,
+      role: String,
+      startDate: Date,
+      endDate: Date,
+      responsibilities: String,
+    },
+  ],
+  projects: [
+    {
+      projectName: {
+        type: String,
+        required: true,
+      },
+      projectDetails: {
+        type: String,
+        required: true,
+      },
+    },
+  ],
+  onlineProfiles: [
+    {
+      profileName: {
+        type: String,
+        required: true,
+      },
+      url: {
+        type: String,
+        required: true,
+      },
     },
   ],
   createdAt: {

@@ -11,8 +11,9 @@ const jobSchema = new Schema({
     type: [String],
     required: true,
   },
-  city: {
-    type: String,
+  cityId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "City",
     required: true,
   },
   salaryRange: {
@@ -35,8 +36,9 @@ const jobSchema = new Schema({
       required: true,
     },
   },
-  companyName: {
-    type: String,
+  companyId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Company",
     required: true,
   },
   jobPoster: {

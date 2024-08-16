@@ -10,13 +10,15 @@ const checkRole = (role) => {
       console.log("inside check user ", req.user);
       switch (role) {
         case "admin":
-          user = await Admin.findById(req.user.userId);
+          user = await Admin.findById(req.user.id);
           break;
         case "jobgiver":
-          user = await JobGiver.findById(req.user.userId);
+          console.log("jobgiverrrr");
+          user = await JobGiver.findById(req.user.id);
           break;
         case "jobapplier":
-          user = await JobApplier.findById(req.user.userId);
+          console.log("job applier");
+          user = await JobApplier.findById(req.user.id);
           break;
         default:
           return res.status(400).json({ message: "Invalid role specified." });

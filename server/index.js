@@ -10,6 +10,7 @@ import companyRoutes from "./routes/company.routes.js";
 import cityRoutes from "./routes/city.routes.js";
 import industryRoutes from "./routes/industry.routes.js";
 import jobApplierRoutes from "./routes/jobappliers.routes.js";
+import jobRoutes from "./routes/job.routes.js";
 
 dotenv.config();
 
@@ -30,5 +31,6 @@ app.use("/admin", adminRoutes);
 app.use("/admin", cityRoutes);
 app.use("/admin", industryRoutes);
 app.use("/company", companyRoutes);
+app.use("/jobs", jobRoutes);
 
 app.listen(port, () => console.log(`Server is listening on port ${port}`));

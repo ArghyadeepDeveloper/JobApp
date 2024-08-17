@@ -101,11 +101,11 @@ export const getCompanyById = async (req, res) => {
   try {
     const { id } = req.params;
     const company = await Company.findById(id)
-      .populate("jobPosters")
+      // .populate("jobPosters")
       .populate("followers")
       .populate("postedJobs")
-      .populate("posts")
-      .populate("reviews.userId")
+      // .populate("posts")
+      // .populate("reviews.userId")
       .populate("industryId");
     if (!company) {
       return res.status(404).json({ message: "Company not found" });

@@ -1,4 +1,5 @@
 const handleError = (req, res, err, message = "An error occurred") => {
+  console.log("error is ", err);
   if (err.name === "ValidationError") {
     // Handle Mongoose validation errors
     return res.status(400).json({

@@ -23,7 +23,7 @@ const checkRole = (role) => {
         default:
           return res.status(400).json({ message: "Invalid role specified." });
       }
-
+      console.log("user is ", user);
       if (!user) {
         return res.status(403).json({
           message: "Access denied. User not found or not authorized.",

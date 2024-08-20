@@ -13,7 +13,7 @@ const checkRole = (role) => {
           user = await Admin.findById(req.user.id);
           break;
         case "jobgiver":
-          console.log("jobgiverrrr");
+          console.log("jobgiverrrr", req.user);
           user = await JobGiver.findById(req.user.id);
           break;
         case "jobapplier":

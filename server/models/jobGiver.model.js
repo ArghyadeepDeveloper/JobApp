@@ -20,7 +20,7 @@ const jobGiverSchema = new Schema({
   companyId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Company",
-    default: "",
+    default: null,
   },
   postedJobs: [
     {

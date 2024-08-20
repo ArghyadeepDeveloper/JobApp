@@ -19,7 +19,13 @@ router.post(
   createPost
 );
 router.get("/", verifyToken, checkRole("jobgiver"), getPosts);
-router.put("/:id", verifyToken, checkRole("jobgiver"), updatePost);
+router.put(
+  "/:id",
+  verifyToken,
+  checkRole("jobgiver"),
+  upload.single("post"),
+  updatePost
+);
 router.delete("/:id", verifyToken, checkRole("jobgiver"), deletePost);
 
 export default router;

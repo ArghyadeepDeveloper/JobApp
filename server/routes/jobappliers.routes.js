@@ -12,6 +12,10 @@ import {
 import verifyToken from "../middlewares/verifyToken.js";
 import checkRole from "../middlewares/checkRole.js";
 import upload from "../middlewares/multerConfig.js";
+import {
+  applyToJob,
+  cancelJobApplication,
+} from "../controllers/job.controller.js";
 
 const jobApplierRoutes = express.Router();
 
@@ -48,6 +52,18 @@ jobApplierRoutes.post(
   checkRole("jobapplier"),
   upload.single("resume"),
   uploadResume
+);
+jobApplierRoutes.post(
+  "/jobs/:id/apply",
+  verifyToken,
+  checkRole("jobapplier"),
+  applyToJob
+);
+jobApplierRoutes.post(
+  "/jobs/:id/cancel",
+  verifyToken,
+  checkRole("jobapplier"),
+  cancelJobApplication
 );
 
 export default jobApplierRoutes;

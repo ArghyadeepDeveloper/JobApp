@@ -2,6 +2,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import JobGiver from "../models/jobGiver.model.js"; // Adjust the path as necessary
 import handleError from "../errors/errorHandler.js";
+import JobApplier from "../models/jobappliers.model.js";
 
 const saltRounds = 10; // Number of rounds for hashing
 
@@ -65,5 +66,41 @@ export const loginJobGiver = async (req, res) => {
   } catch (error) {
     console.error("Error during login:", error);
     handleError(req, res, error, "Internal server error");
+  }
+};
+
+export const getAllJobApplications = async (req, res) => {
+  try {
+    const jobGiverId = req.user.id;
+
+    // Find the JobGiver by ID and populate the postedJobs field along with applicants
+    const jobGiver = await JobGiver.findById(jobGiverId).populate({
+      path: "postedJobs",
+      populate: {
+        path: "applicants",
+        select: "firstName lastName _id",
+      },
+    });
+
+    if (!jobGiver) {
+      return res.status(404).json({ message: "Job Giver not found" });
+    }
+
+    // Construct the response data
+    const jobApplications = jobGiver.postedJobs.map((job) => ({
+      jobId: job._id,
+      jobDescription: job.name,
+      requiredSkills: job.necessarySkills,
+      experienceRequired: job.experienceRange,
+      salaryRange: job.salaryRange,
+      applicants: job.applicants.map((applicant) => ({
+        name: `${applicant.firstName} ${applicant.lastName}`,
+        id: applicant._id,
+      })),
+    }));
+
+    res.status(200).json(jobApplications);
+  } catch (error) {
+    handleError(req, res, error, "Failed to get job applications");
   }
 };

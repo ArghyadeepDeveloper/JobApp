@@ -46,29 +46,41 @@ export const getPosts = async (req, res) => {
 export const updatePost = async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, description, imageURL } = req.body;
+    const { title, description } = req.body;
 
+    // Fetch the post to be updated
     const post = await Post.findById(id);
     if (!post) {
-      return handleError(res, "Post not found", 404);
+      return res.status(404).json({ message: "Post not found" });
     }
 
+    // Retrieve the company associated with the job giver
     const company = await Company.findOne({ createdBy: req.user.id });
-    if (!company || post.companyId.toString() !== company._id.toString()) {
-      return handleError(res, "Not authorized to update this post", 403);
+    if (!company) {
+      return res.status(403).json({ message: "Company not found" });
     }
 
+    // Check if the post belongs to the job giver's company
+    if (post.companyId.toString() !== company._id.toString()) {
+      return res
+        .status(403)
+        .json({ message: "You are not authorized to update this post" });
+    }
+
+    // Update post fields
     post.title = title || post.title;
     post.description = description || post.description;
-    post.imageURL = imageURL || post.imageURL;
+    if (req.file) {
+      post.imageURL = req.file.filename; // Assuming you're using multer for file uploads
+    }
 
+    // Save the updated post
     await post.save();
     res.status(200).json(post);
   } catch (error) {
-    handleError(req, res, error);
+    handleError(res, error);
   }
 };
-
 // Delete a post
 export const deletePost = async (req, res) => {
   try {
@@ -76,17 +88,86 @@ export const deletePost = async (req, res) => {
 
     const post = await Post.findById(id);
     if (!post) {
-      return handleError(res, "Post not found", 404);
+      res.status(404).json({ message: "Post not found" });
     }
 
     const company = await Company.findOne({ createdBy: req.user.id });
     if (!company || post.companyId.toString() !== company._id.toString()) {
-      return handleError(res, "Not authorized to delete this post", 403);
+      res.status(403).json({ message: "Unauthorised to delete the post." });
     }
 
-    await post.remove();
+    await Post.deleteOne({ _id: id });
     res.status(200).json({ message: "Post deleted successfully" });
   } catch (error) {
-    handleError(req, res, error);
+    handleError(req, res, error, "Failed to delete post.");
+  }
+};
+
+export const addReaction = async (req, res) => {
+  try {
+    const { postId } = req.params;
+
+    // Check if the reaction already exists
+    const post = await Post.findOne({
+      _id: postId,
+      "reactedBy.userId": req.user.id,
+    });
+    if (post) {
+      return res
+        .status(400)
+        .json({ message: "You have already reacted to this post" });
+    }
+
+    // Add the reaction
+    await Post.updateOne(
+      { _id: postId },
+      {
+        $push: {
+          reactedBy: {
+            userId: req.user.id,
+            role: "jobseeker", // Assuming the role is jobseeker
+          },
+        },
+        $inc: { reactions: 1 },
+      }
+    );
+
+    res.status(200).json({ message: "Reaction added successfully" });
+  } catch (error) {
+    handleError(req, res, error, "Failed to add reaction to post");
+  }
+};
+
+// Remove a reaction from a post
+export const removeReaction = async (req, res) => {
+  try {
+    const { postId } = req.params;
+
+    // Check if the reaction exists
+    const post = await Post.findOne({
+      _id: postId,
+      "reactedBy.userId": req.user.id,
+    });
+    if (!post) {
+      return res.status(400).json({ message: "No reaction found to remove" });
+    }
+
+    // Remove the reaction
+    await Post.updateOne(
+      { _id: postId },
+      {
+        $pull: {
+          reactedBy: {
+            userId: req.user.id,
+            role: "jobseeker", // Assuming the role is jobseeker
+          },
+        },
+        $inc: { reactions: -1 },
+      }
+    );
+
+    res.status(200).json({ message: "Reaction removed successfully" });
+  } catch (error) {
+    handleError(req, res, error, "Failed to remove reaction");
   }
 };

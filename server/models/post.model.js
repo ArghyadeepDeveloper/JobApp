@@ -19,6 +19,12 @@ const postSchema = new Schema(
       type: Number,
       default: 0,
     },
+    reactedBy: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "JobApplier", // Assuming you have a User model
+      },
+    ],
     companyId: {
       type: Schema.Types.ObjectId,
       ref: "Company",

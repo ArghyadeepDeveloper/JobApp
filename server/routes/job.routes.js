@@ -5,6 +5,8 @@ import {
   editJob,
   deleteJob,
   getJobsBySearchTerm,
+  applyToJob,
+  cancelJobApplication,
 } from "../controllers/job.controller.js";
 import checkRole from "../middlewares/checkRole.js";
 import verifyToken from "../middlewares/verifyToken.js";

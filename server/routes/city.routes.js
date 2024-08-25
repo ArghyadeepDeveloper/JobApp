@@ -11,7 +11,7 @@ import checkRole from "../middlewares/checkRole.js";
 const cityRoutes = express.Router();
 
 cityRoutes.post("/cities", verifyToken, checkRole("admin"), createCity);
-cityRoutes.get("/cities", verifyToken, checkRole("admin"), getCities);
+cityRoutes.get("/cities", getCities);
 cityRoutes.put("/cities/:id", verifyToken, checkRole("admin"), updateCityById);
 cityRoutes.delete(
   "/cities/:id",

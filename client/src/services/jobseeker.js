@@ -1,4 +1,4 @@
-import { axiosPrivate, axiosPrivate } from "../api/config";
+import { axiosPrivate } from "../api/config";
 
 export async function registerJobseeker(payload) {
   return axiosPrivate.post("jobseekers/register", payload);

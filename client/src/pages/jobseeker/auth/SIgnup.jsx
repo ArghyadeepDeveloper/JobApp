@@ -7,6 +7,7 @@ import { StepperPanel } from "primereact/stepperpanel";
 import SelectField from "../../../components/SelectField";
 import { getCitiesClient } from "../../../services/admin";
 import { registerJobseeker } from "../../../services/jobseeker";
+import { notifyError, notifySuccess } from "../../../helpers/ToastNotification";
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
@@ -23,6 +24,7 @@ const SignUp = () => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [buttonDisabled, setButtonDisabeld] = useState(true);
   const [cities, setCities] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -108,66 +110,77 @@ const SignUp = () => {
     setErrors(validationErrors);
   };
 
-  const validateStep = () => {
-    const stepFields = [
-      activeIndex === 0 && ["firstName", "lastName"],
-      activeIndex === 1 && ["email", "password", "phone"],
-      activeIndex === 2 && ["city", "dateOfBirth"],
-    ].filter(Boolean)[0];
-
-    let isValid = true;
-    stepFields.forEach((field) => {
-      validateField(field, formData[field]);
-      if (errors[field]) {
-        isValid = false;
-      }
-    });
-
-    return isValid;
+  const validateForm = () => {
+    if (
+      !formData.firstName ||
+      !formData.lastName ||
+      !formData.email ||
+      !formData.city ||
+      !formData.dateOfBirth ||
+      !formData.password ||
+      !formData.phone
+    ) {
+      console.log(formData);
+      setButtonDisabeld(true);
+    } else {
+      console.log("false");
+      setButtonDisabeld(false);
+    }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (validateStep()) {
-      console.log("Form Submitted", formData);
-      await registerJobSeekerWithAPI();
-    } else {
-      console.log("not validated");
+  const handleSubmit = async () => {
+    try {
+      let response = await registerJobSeekerWithAPI();
+      if (response.status == 201) {
+        notifySuccess("User registered successfully");
+      } else throw new Error("something wrond");
+    } catch (err) {
+      // e.preventDefault();
+      // if (validateStep()) {
+      //   console.log("Form Submitted", formData);
+      //   await registerJobSeekerWithAPI();
+      // } else {
+      //   console.log("not validated");
+      // }
+      notifyError(err.message ? err.message : err.response.data.message);
     }
   };
 
   const stepperRef = useRef(null);
 
-  useEffect(() => {
-    if (Object.keys(errors).length === 0) {
-      setButtonDisabeld(false);
-    } else {
-      setButtonDisabeld(true);
-    }
-  }, [errors]);
-
   async function getCitiesWithAPI() {
     try {
       let response = await getCitiesClient();
       setCities(response.data);
-    } catch (err) {}
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   useEffect(() => {
     getCitiesWithAPI();
   }, []);
 
+  useEffect(function () {
+    validateForm();
+  });
+
   async function registerJobSeekerWithAPI() {
     try {
+      setLoading(true);
       const response = await registerJobseeker(formData);
-    } catch (err) {}
+      if (response.status == 201) {
+        showSuccess("User registered successfully!");
+      }
+    } catch (err) {
+      showError(err.response.data.message);
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="w-[90vw] 2xl:w-[30vw] xl:w-[30vw] flex flex-col items-center"
-    >
+    <div className="w-[90vw] 2xl:w-[30vw] xl:w-[30vw] flex flex-col items-center">
       <Stepper
         ref={stepperRef}
         activeIndex={activeIndex}
@@ -247,11 +260,15 @@ const SignUp = () => {
         </StepperPanel>
       </Stepper>
       <Button
-        className="bg-teal-400 px-3 py-1 text-white"
+        className={` px-3 py-1 text-white ${
+          buttonDisabled ? "bg-teal-700" : "bg-teal-400"
+        }`}
         label="Submit"
+        onClick={handleSubmit}
         disabled={buttonDisabled}
+        loading={loading}
       />
-    </form>
+    </div>
   );
 };
 

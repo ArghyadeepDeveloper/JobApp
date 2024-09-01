@@ -1,32 +1,22 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import InputField from "../../../components/InputField";
-import DatePicker from "../../../components/DatePicker";
 import { Button } from "primereact/button";
-import { Stepper } from "primereact/stepper";
-import { StepperPanel } from "primereact/stepperpanel";
-import SelectField from "../../../components/SelectField";
-import { getCitiesClient } from "../../../services/admin";
-import { registerJobseeker } from "../../../services/jobseeker";
-import { notifyError, notifySuccess } from "../../../helpers/ToastNotification";
-import VariableText from "../../../components/VariableText";
 import { Link } from "react-router-dom";
+import { loginJobseeker } from "../../../services/jobseeker";
+import { notifyError, notifySuccess } from "../../../helpers/ToastNotification";
+import OTPInput from "react-otp-input"; // Assuming you have this package installed
 
-const JobSeekerSignUp = () => {
+const JobSeekerLogin = () => {
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
     email: "",
     password: "",
-    city: "",
-    phone: "",
-    dateOfBirth: null,
+    otp: "",
   });
 
   const [errors, setErrors] = useState({});
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [buttonDisabled, setButtonDisabeld] = useState(true);
-  const [cities, setCities] = useState([]);
+  const [buttonDisabled, setButtonDisabled] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [otpMode, setOtpMode] = useState(false); // To toggle between password and OTP modes
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -34,31 +24,15 @@ const JobSeekerSignUp = () => {
     validateField(name, value);
   };
 
-  const handleDateChange = (e) => {
-    setFormData({ ...formData, dateOfBirth: e.value });
-    validateField("dateOfBirth", e.value);
+  const handleOtpChange = (otp) => {
+    setFormData({ ...formData, otp });
+    validateField("otp", otp);
   };
 
   const validateField = (name, value) => {
     let validationErrors = { ...errors };
 
     switch (name) {
-      case "firstName":
-        if (!value) {
-          validationErrors.firstName = "First Name is required";
-        } else {
-          delete validationErrors.firstName;
-        }
-        break;
-
-      case "lastName":
-        if (!value) {
-          validationErrors.lastName = "Last Name is required";
-        } else {
-          delete validationErrors.lastName;
-        }
-        break;
-
       case "email":
         if (!value) {
           validationErrors.email = "Email is required";
@@ -79,29 +53,13 @@ const JobSeekerSignUp = () => {
         }
         break;
 
-      case "phone":
+      case "otp":
         if (!value) {
-          validationErrors.phone = "Phone number is required";
-        } else if (!/^\d{10}$/.test(value)) {
-          validationErrors.phone = "Phone number must be 10 digits";
+          validationErrors.otp = "OTP is required";
+        } else if (value.length !== 6) {
+          validationErrors.otp = "OTP must be 6 digits";
         } else {
-          delete validationErrors.phone;
-        }
-        break;
-
-      case "city":
-        if (!value) {
-          validationErrors.city = "City is required";
-        } else {
-          delete validationErrors.city;
-        }
-        break;
-
-      case "dateOfBirth":
-        if (!value) {
-          validationErrors.dateOfBirth = "Date of Birth is required";
-        } else {
-          delete validationErrors.dateOfBirth;
+          delete validationErrors.otp;
         }
         break;
 
@@ -114,179 +72,103 @@ const JobSeekerSignUp = () => {
 
   const validateForm = () => {
     if (
-      !formData.firstName ||
-      !formData.lastName ||
-      !formData.email ||
-      !formData.city ||
-      !formData.dateOfBirth ||
-      !formData.password ||
-      !formData.phone
+      (!otpMode && (!formData.email || !formData.password)) ||
+      (otpMode && (!formData.email || !formData.otp))
     ) {
-      console.log(formData);
-      setButtonDisabeld(true);
+      setButtonDisabled(true);
     } else {
-      console.log("false");
-      setButtonDisabeld(false);
+      setButtonDisabled(false);
     }
   };
 
   const handleSubmit = async () => {
     try {
-      let response = await registerJobSeekerWithAPI();
-      if (response.status == 201) {
-        notifySuccess("User registered successfully");
-      } else throw new Error("something wrond");
-    } catch (err) {
-      // e.preventDefault();
-      // if (validateStep()) {
-      //   console.log("Form Submitted", formData);
-      //   await registerJobSeekerWithAPI();
-      // } else {
-      //   console.log("not validated");
-      // }
-      notifyError(err.message ? err.message : err.response.data.message);
-    }
-  };
-
-  const stepperRef = useRef(null);
-
-  async function getCitiesWithAPI() {
-    try {
-      let response = await getCitiesClient();
-      setCities(response.data);
-    } catch (err) {
-      console.log(err);
-    }
-  }
-
-  useEffect(() => {
-    getCitiesWithAPI();
-  }, []);
-
-  useEffect(function () {
-    validateForm();
-  });
-
-  async function registerJobSeekerWithAPI() {
-    try {
       setLoading(true);
-      const response = await registerJobseeker(formData);
-      if (response.status == 201) {
-        showSuccess("User registered successfully!");
+      const response = await loginJobseeker({
+        email: formData.email,
+        password: formData.password,
+      });
+      if (response.status === 200) {
+        notifySuccess("Login successful");
       }
     } catch (err) {
-      showError(err.response.data.message);
+      notifyError(err.message ? err.message : err.response.data.message);
     } finally {
       setLoading(false);
     }
-  }
+  };
+
+  useEffect(() => {
+    validateForm();
+  }, [formData, otpMode]);
 
   return (
     <div className="w-[90vw] 2xl:w-[30vw] xl:w-[30vw] flex flex-col items-start h-screen justify-start">
       <header className="text-teal-500 mb-2 mt-[200px] text-2xl font-semibold">
-        Create Account
+        Login
       </header>
-      {/* <VariableText className="text-black text-2xl" text={"Get Paid more.\n"} /> */}
       <p className="text-lg text-slate-700 font-bold mb-6">
-        Get new jobs. Get paid more.
+        Access your account
       </p>
       <div className="flex flex-col justify-between items-center card w-full">
-        <Stepper
-          ref={stepperRef}
-          activeIndex={activeIndex}
-          onTabChange={(e) => setActiveIndex(e.index)}
-          className="w-full p-0 "
-        >
-          <StepperPanel header="" className="p-0">
-            <InputField
-              label="First Name"
-              type="text"
-              name="firstName"
-              value={formData.firstName}
-              onChange={handleInputChange}
-              error={errors.firstName}
-              placeholder="Enter your first name"
-            />
-            <InputField
-              label="Last Name"
-              type="text"
-              name="lastName"
-              value={formData.lastName}
-              onChange={handleInputChange}
-              error={errors.lastName}
-              placeholder="Enter your last name"
-            />
-          </StepperPanel>
-
-          <StepperPanel header="">
-            <InputField
-              label="Email"
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleInputChange}
-              error={errors.email}
-              placeholder="Enter your email"
-            />
-            <InputField
-              label="Password"
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleInputChange}
-              error={errors.password}
-              placeholder="Enter your password"
-            />
-            <InputField
-              label="Phone"
-              type="number"
-              name="phone"
-              value={formData.phone}
-              onChange={handleInputChange}
-              error={errors.phone}
-              placeholder="Enter your phone number"
-            />
-          </StepperPanel>
-
-          <StepperPanel header="">
-            <SelectField
-              label="City"
-              value={formData.city}
-              onChange={(value) => setFormData({ ...formData, city: value })}
-              data={cities}
-              helper={{ label: "name", value: "code" }}
-              placeholder="Select your city"
-              error={errors.city}
-              name="city"
-            />
-            <DatePicker
-              label="Date of Birth"
-              value={formData.dateOfBirth}
-              onChange={handleDateChange}
-              error={errors.dateOfBirth}
-              placeholder="Select your date of birth"
-              name="dateOfBirth"
-            />
-          </StepperPanel>
-        </Stepper>
+        <InputField
+          label="Email"
+          type="email"
+          name="email"
+          value={formData.email}
+          onChange={handleInputChange}
+          error={errors.email}
+          placeholder="Enter your email"
+        />
+        {!otpMode ? (
+          <InputField
+            label="Password"
+            type="password"
+            name="password"
+            value={formData.password}
+            onChange={handleInputChange}
+            error={errors.password}
+            placeholder="Enter your password"
+          />
+        ) : (
+          <OTPInput
+            value={formData.otp}
+            onChange={handleOtpChange}
+            numInputs={6}
+            separator={<span>-</span>}
+            inputStyle="otp-input" // Define styles in your CSS
+            shouldAutoFocus
+          />
+        )}
         <Button
-          className={` px-3 py-1 my-4 text-white ${
+          className={`px-3 py-1 my-4 text-white ${
             buttonDisabled ? "bg-teal-700" : "bg-teal-400"
           }`}
-          label="Submit"
+          label="Login"
           onClick={handleSubmit}
           disabled={buttonDisabled}
           loading={loading}
         />
         <div className="flex gap-2 mb-2">
-          <p className="m-0">Already have an account?</p>
-          <a to="/login" className="text-teal-700 font-medium">
+          <p className="m-0">Don't have an account?</p>
+          <Link
+            to="/jobseeker/auth/signup"
+            className="text-teal-700 font-medium"
+          >
             Sign Up
-          </a>{" "}
+          </Link>
+        </div>
+        <div className="flex gap-2 mt-4">
+          <p className="m-0">Login with OTP instead?</p>
+          <Button
+            label={otpMode ? "Use Password" : "Use OTP"}
+            className="p-button-link p-0 text-teal-700 font-medium"
+            onClick={() => setOtpMode(!otpMode)}
+          />
         </div>
       </div>
     </div>
   );
 };
 
-export default JobSeekerSignUp;
+export default JobSeekerLogin;

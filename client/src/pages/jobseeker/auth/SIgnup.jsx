@@ -8,8 +8,10 @@ import SelectField from "../../../components/SelectField";
 import { getCitiesClient } from "../../../services/admin";
 import { registerJobseeker } from "../../../services/jobseeker";
 import { notifyError, notifySuccess } from "../../../helpers/ToastNotification";
+import VariableText from "../../../components/VariableText";
+import { Link } from "react-router-dom";
 
-const SignUp = () => {
+const JobSeekerSignUp = () => {
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -180,96 +182,111 @@ const SignUp = () => {
   }
 
   return (
-    <div className="w-[90vw] 2xl:w-[30vw] xl:w-[30vw] flex flex-col items-center">
-      <Stepper
-        ref={stepperRef}
-        activeIndex={activeIndex}
-        onTabChange={(e) => setActiveIndex(e.index)}
-        className="w-full p-0"
-      >
-        <StepperPanel header="" className="p-0">
-          <InputField
-            label="First Name"
-            type="text"
-            name="firstName"
-            value={formData.firstName}
-            onChange={handleInputChange}
-            error={errors.firstName}
-            placeholder="Enter your first name"
-          />
-          <InputField
-            label="Last Name"
-            type="text"
-            name="lastName"
-            value={formData.lastName}
-            onChange={handleInputChange}
-            error={errors.lastName}
-            placeholder="Enter your last name"
-          />
-        </StepperPanel>
+    <div className="w-[90vw] 2xl:w-[30vw] xl:w-[30vw] flex flex-col items-start h-screen justify-start">
+      <header className="text-teal-500 mb-2 mt-[200px] text-2xl font-semibold">
+        Create Account
+      </header>
+      {/* <VariableText className="text-black text-2xl" text={"Get Paid more.\n"} /> */}
+      <p className="text-lg text-slate-700 font-bold mb-6">
+        Get new jobs. Get paid more.
+      </p>
+      <div className="flex flex-col justify-between items-center card w-full">
+        <Stepper
+          ref={stepperRef}
+          activeIndex={activeIndex}
+          onTabChange={(e) => setActiveIndex(e.index)}
+          className="w-full p-0 "
+        >
+          <StepperPanel header="" className="p-0">
+            <InputField
+              label="First Name"
+              type="text"
+              name="firstName"
+              value={formData.firstName}
+              onChange={handleInputChange}
+              error={errors.firstName}
+              placeholder="Enter your first name"
+            />
+            <InputField
+              label="Last Name"
+              type="text"
+              name="lastName"
+              value={formData.lastName}
+              onChange={handleInputChange}
+              error={errors.lastName}
+              placeholder="Enter your last name"
+            />
+          </StepperPanel>
 
-        <StepperPanel header="">
-          <InputField
-            label="Email"
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleInputChange}
-            error={errors.email}
-            placeholder="Enter your email"
-          />
-          <InputField
-            label="Password"
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleInputChange}
-            error={errors.password}
-            placeholder="Enter your password"
-          />
-          <InputField
-            label="Phone"
-            type="number"
-            name="phone"
-            value={formData.phone}
-            onChange={handleInputChange}
-            error={errors.phone}
-            placeholder="Enter your phone number"
-          />
-        </StepperPanel>
+          <StepperPanel header="">
+            <InputField
+              label="Email"
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleInputChange}
+              error={errors.email}
+              placeholder="Enter your email"
+            />
+            <InputField
+              label="Password"
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleInputChange}
+              error={errors.password}
+              placeholder="Enter your password"
+            />
+            <InputField
+              label="Phone"
+              type="number"
+              name="phone"
+              value={formData.phone}
+              onChange={handleInputChange}
+              error={errors.phone}
+              placeholder="Enter your phone number"
+            />
+          </StepperPanel>
 
-        <StepperPanel header="">
-          <SelectField
-            label="City"
-            value={formData.city}
-            onChange={(value) => setFormData({ ...formData, city: value })}
-            data={cities}
-            helper={{ label: "name", value: "code" }}
-            placeholder="Select your city"
-            error={errors.city}
-            name="city"
-          />
-          <DatePicker
-            label="Date of Birth"
-            value={formData.dateOfBirth}
-            onChange={handleDateChange}
-            error={errors.dateOfBirth}
-            placeholder="Select your date of birth"
-            name="dateOfBirth"
-          />
-        </StepperPanel>
-      </Stepper>
-      <Button
-        className={` px-3 py-1 text-white ${
-          buttonDisabled ? "bg-teal-700" : "bg-teal-400"
-        }`}
-        label="Submit"
-        onClick={handleSubmit}
-        disabled={buttonDisabled}
-        loading={loading}
-      />
+          <StepperPanel header="">
+            <SelectField
+              label="City"
+              value={formData.city}
+              onChange={(value) => setFormData({ ...formData, city: value })}
+              data={cities}
+              helper={{ label: "name", value: "code" }}
+              placeholder="Select your city"
+              error={errors.city}
+              name="city"
+            />
+            <DatePicker
+              label="Date of Birth"
+              value={formData.dateOfBirth}
+              onChange={handleDateChange}
+              error={errors.dateOfBirth}
+              placeholder="Select your date of birth"
+              name="dateOfBirth"
+            />
+          </StepperPanel>
+        </Stepper>
+        <Button
+          className={` px-3 py-1 my-4 text-white ${
+            buttonDisabled ? "bg-teal-700" : "bg-teal-400"
+          }`}
+          label="Submit"
+          onClick={handleSubmit}
+          disabled={buttonDisabled}
+          loading={loading}
+        />
+        <div className="flex gap-2 mb-2">
+          <p className="m-0">Already have an account?</p>
+          <a to="/login" className="text-teal-700 font-medium">
+            Sign Up
+          </a>{" "}
+        </div>
+      </div>
     </div>
   );
 };
 
-export default SignUp;
+export default JobSeekerSignUp;

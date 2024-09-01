@@ -13,7 +13,7 @@ const DatePicker = ({ label, value, onChange, error, placeholder, name }) => {
         name={name}
         placeholder={placeholder}
         dateFormat="mm/dd/yy"
-        className={`w-full p-2 mb-1 border-2 border-gray-200 ${
+        className={`w-full p-2 mb-1 border-2 border-none bg-gray-100 ${
           error ? "p-invalid" : ""
         }`}
       />

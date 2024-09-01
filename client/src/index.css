@@ -1,3 +1,48 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* card.css */
+
+.card {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease-in-out;
+  margin: 10px 0px;
+  border-radius: 5px;
+  padding: 0.5rem !important;
+}
+
+/* Responsive Padding */
+@media (min-width: 640px) {
+  /* Small screens (sm) */
+  .card {
+    padding: 1rem; /* 16px */
+  }
+}
+
+@media (min-width: 768px) {
+  /* Medium screens (md) */
+  .card {
+    padding: 1.5rem; /* 24px */
+  }
+}
+
+@media (min-width: 1024px) {
+  /* Large screens (lg) */
+  .card {
+    padding: 2rem; /* 32px */
+  }
+}
+
+@media (min-width: 1280px) {
+  /* Extra large screens (xl) */
+  .card {
+    padding: 2.5rem; /* 40px */
+  }
+}
+
+/* Box Shadow Hover Effect .card:hover {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+} */

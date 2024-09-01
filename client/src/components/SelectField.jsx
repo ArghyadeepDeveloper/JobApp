@@ -26,7 +26,7 @@ const SelectField = ({
         onChange={(e) => onChange(e.value)}
         options={options}
         placeholder={placeholder}
-        className={`w-full p-0 mb-1 border-2 border-gray-200 focus:outline-none rounded-[5px] ${
+        className={`w-full p-0 mb-1 border-2 border-gray-200 focus:outline-none rounded-[5px] border-none bg-gray-100 ${
           error ? "p-invalid" : ""
         }`}
         name={name}

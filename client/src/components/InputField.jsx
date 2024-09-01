@@ -24,7 +24,7 @@ const InputField = ({
       </label>
       <div className="relative">
         {type === "password" ? (
-          <div className="flex w-full mb-1 border-2">
+          <div className="flex w-full mb-1 border-2 border-none">
             <InputText
               type={showPassword ? "text" : "password"}
               value={value}
@@ -33,10 +33,11 @@ const InputField = ({
               placeholder={placeholder}
               className={`w-full focus:outline-none p-1 rounded-[5px] ${
                 error ? "p-invalid" : ""
-              }`}
+              } border-none bg-gray-100 p-2`}
             />
             <span
-              className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5 cursor-pointer"
+              className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5 cursor-pointer
+              border-none"
               onClick={handleTogglePassword}
             >
               {showPassword ? <AiFillEyeInvisible /> : <AiFillEye />}
@@ -51,7 +52,7 @@ const InputField = ({
             placeholder={placeholder}
             className={`w-full mb-1 border-2 border-gray-200 focus:outline-none p-1 rounded-[5px] ${
               error ? "p-invalid" : ""
-            }`}
+            } border-none bg-gray-100 p-2`}
           />
         )}
       </div>

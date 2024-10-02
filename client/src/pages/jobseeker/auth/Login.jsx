@@ -118,7 +118,7 @@ const JobSeekerLogin = () => {
               placeholder="Enter your password"
             />
             <Button
-              className={` px-3 py-1 my-4 text-white ${
+              className={` px-3 py-1 my-4 text-white cursor-poiner ${
                 loading ? "bg-teal-700" : "bg-teal-400"
               }`}
               label="Login"
@@ -160,7 +160,7 @@ const JobSeekerLogin = () => {
 
         <div className="flex gap-2 mb-2">
           <p className="m-0">Don't have an account?</p>
-          <Link to="/signup" className="text-teal-700 font-medium">
+          <Link to="/jobseeker/signup" className="text-teal-700 font-medium">
             Sign Up
           </Link>
         </div>

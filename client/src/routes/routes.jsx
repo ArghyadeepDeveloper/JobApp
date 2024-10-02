@@ -18,6 +18,7 @@ import JobSeekerHome from "../pages/jobseeker/home/index";
 // Common Pages
 import Jobs from "../pages/jobseeker/jobs/index";
 import Profile from "../pages/jobseeker/profile/index";
+import Dashboard from "../pages/jobgiver/dashboard";
 
 const RoutesComponent = () => {
   return (
@@ -30,6 +31,7 @@ const RoutesComponent = () => {
           <Route path="home" element={<JobGiverHome />} />
           <Route path="jobs" element={<Jobs />} />
           <Route path="profile" element={<Profile />} />
+          <Route path="dashboard" element={<Dashboard />} />
         </Route>
       </Route>
 

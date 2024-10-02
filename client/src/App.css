@@ -2,3 +2,7 @@
   height: 20px !important;
   width: 20px !important;
 } */
+
+img {
+  height: 100% !important;
+}

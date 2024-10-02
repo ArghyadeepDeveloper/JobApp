@@ -4,7 +4,7 @@ import { Button } from "primereact/button";
 import { Link } from "react-router-dom";
 import { loginJobseeker } from "../../../services/jobseeker";
 import { notifyError, notifySuccess } from "../../../helpers/ToastNotification";
-import OTPInput from "react-otp-input"; // Assuming you have this package installed
+import { InputOtp } from "primereact/inputotp";
 
 const JobSeekerLogin = () => {
   const [formData, setFormData] = useState({
@@ -17,6 +17,7 @@ const JobSeekerLogin = () => {
   const [buttonDisabled, setButtonDisabled] = useState(true);
   const [loading, setLoading] = useState(false);
   const [otpMode, setOtpMode] = useState(false); // To toggle between password and OTP modes
+  const [otp, setOtp] = useState();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -102,6 +103,15 @@ const JobSeekerLogin = () => {
     validateForm();
   }, [formData, otpMode]);
 
+  const customInput = ({ events, props }) => (
+    <input
+      {...events}
+      {...props}
+      type="text"
+      className="bg-gray-100 border border-slate-400 rounded-[5px] w-10 h-12"
+    />
+  );
+
   return (
     <div className="w-[90vw] 2xl:w-[30vw] xl:w-[30vw] flex flex-col items-start h-screen justify-start">
       <header className="text-teal-500 mb-2 mt-[200px] text-2xl font-semibold">
@@ -131,17 +141,14 @@ const JobSeekerLogin = () => {
             placeholder="Enter your password"
           />
         ) : (
-          <OTPInput
-            value={formData.otp}
-            onChange={handleOtpChange}
-            numInputs={6}
-            separator={<span>-</span>}
-            inputStyle="otp-input" // Define styles in your CSS
-            shouldAutoFocus
+          <InputOtp
+            value={otp}
+            onChange={(e) => setOtp(e.value)}
+            inputTemplate={customInput}
           />
         )}
         <Button
-          className={`px-3 py-1 my-4 text-white ${
+          className={`px-3 py-1 my-4 cursor-pointer text-white ${
             buttonDisabled ? "bg-teal-700" : "bg-teal-400"
           }`}
           label="Login"
@@ -151,15 +158,14 @@ const JobSeekerLogin = () => {
         />
         <div className="flex gap-2 mb-2">
           <p className="m-0">Don't have an account?</p>
-          <Link
-            to="/jobseeker/auth/signup"
-            className="text-teal-700 font-medium"
-          >
+          <Link to="/jobseeker/signup" className="text-teal-700 font-medium">
             Sign Up
           </Link>
         </div>
         <div className="flex gap-2 mt-4">
-          <p className="m-0">Login with OTP instead?</p>
+          <p className="m-0">
+            Login with {!otpMode ? "OTP" : "password"} instead?
+          </p>
           <Button
             label={otpMode ? "Use Password" : "Use OTP"}
             className="p-button-link p-0 text-teal-700 font-medium"
